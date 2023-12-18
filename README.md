@@ -1,6 +1,6 @@
-# hosco_clean_architecture
+# TT12_ecommerce_clean_architecture
 
-A new Flutter project.
+A new Flutter project using model Clean Architecture.
 
 ## Getting Started
 
