@@ -35,7 +35,6 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
-
 class CartItemList extends StatelessWidget {
   final List<Product> cartItems;
   const CartItemList({Key? key, required this.cartItems}) : super(key: key);
@@ -48,7 +47,12 @@ class CartItemList extends StatelessWidget {
           itemCount: state.listProduct.length,
           padding: const EdgeInsets.only(bottom: 4),
           itemBuilder: (_, index) {
-            return CartItemTile(product: state.listProduct[index]);
+            // Product product = state.listProduct[index];
+            print("${state.productQuantities}");
+            return CartItemTile(
+              product: state.listProduct[index],
+              mapProduct: state.productQuantities,
+            );
           },
         );
       },
@@ -56,16 +60,19 @@ class CartItemList extends StatelessWidget {
   }
 }
 
-
 class CartItemTile extends StatelessWidget {
   final Product product;
-  const CartItemTile({Key? key, required this.product}) : super(key: key);
+  final Map<num?, num> mapProduct;
+  const CartItemTile(
+      {Key? key, required this.product, required this.mapProduct})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       tileColor: const Color(0xffffffff),
       title: Text(product.title ?? ""),
+      subtitle: Text("x${mapProduct[product.id]}"),
       leading: Image.network(
         product.thumbnail ?? "",
         fit: BoxFit.fill,

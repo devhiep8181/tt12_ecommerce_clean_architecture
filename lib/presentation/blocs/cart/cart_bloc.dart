@@ -9,10 +9,11 @@ part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc() : super(const CartState(CartStatus.initial, [])) {
+  CartBloc() : super(const CartState(CartStatus.initial, [], 0, {})) {
     on<AddProductToCartEvent>(_onAddProductToCart);
     on<RemoveProductToCartEvent>(_onRemoveProductToCart);
   }
+  Map<num?, num> mapProduct = {};
   FutureOr<void> _onAddProductToCart(
     AddProductToCartEvent event,
     Emitter<CartState> emit,
@@ -20,31 +21,43 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       Product product = event.product;
+      num countItemProduct = event.countProduct;
       List<Product> listCart = List.from(state.listProduct);
-      listCart.add(product);
-      emit(state.copyWith(status: CartStatus.success, listProduct: listCart));
+      if (!listCart.contains(product)) {
+        listCart.add(product);
+      }
+      mapProduct[product.id] = countItemProduct;
+      num? totalItemCart;
+      for(var key in mapProduct.keys){
+        totalItemCart = (totalItemCart ?? 0) + mapProduct[key]!;
+      }
+      emit(state.copyWith(
+          status: CartStatus.success,
+          listProduct: listCart,
+          countCart: totalItemCart,
+          productQuantities: mapProduct));
       add(ShowCartEvent(cartItem: listCart));
     } catch (e) {
       emit(state.copyWith(status: CartStatus.error));
     }
   }
-  FutureOr<void> _onRemoveProductToCart(
-  RemoveProductToCartEvent event,
-  Emitter<CartState> emitt,
-) async {
-  try {
-    final Product product = event.product;
-    List<Product> listCart = List.from(state.listProduct);
-    listCart.remove(product);
-    emitt(
-      state.copyWith(status: CartStatus.success, listProduct: listCart),
-    );
-  } catch (e) {
-    if (kDebugMode) {
-      print(e);
-    }
-    emitt(state.copyWith(status: CartStatus.error));
-  }
-}
 
+  FutureOr<void> _onRemoveProductToCart(
+    RemoveProductToCartEvent event,
+    Emitter<CartState> emitt,
+  ) async {
+    try {
+      final Product product = event.product;
+      List<Product> listCart = List.from(state.listProduct);
+      listCart.remove(product);
+      emitt(
+        state.copyWith(status: CartStatus.success, listProduct: listCart),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      emitt(state.copyWith(status: CartStatus.error));
+    }
+  }
 }

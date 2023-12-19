@@ -21,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<ProductBloc>().add(GetListProductEvent());
   }
 
+  int countProduct = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.red,
                   child: Center(
                       child: Text(
-                    "${state.listProduct.length}",
+                    "${state.countCart}",
                     style: const TextStyle(color: Colors.white),
                   )),
                 ),
@@ -117,11 +119,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Map<num?, num> countItem = {};
   Widget _buildBuyButton(BuildContext context, Product product) {
     return ElevatedButton(
         onPressed: () {
-          BlocProvider.of<CartBloc>(context)
-              .add(AddProductToCartEvent(product: product));
+          setState(() {
+            countItem[product.id] = (countItem[product.id] ?? 0) + 1;
+          });
+          print(countItem[product.id]);
+          print("count Item: $countItem");
+          BlocProvider.of<CartBloc>(context).add(AddProductToCartEvent(
+              product: product, countProduct: countItem[product.id] ?? 0));
         },
         child: const Text("Buy"));
   }

@@ -9,17 +9,17 @@ abstract class CartEvent extends Equatable {
 
 class AddProductToCartEvent extends CartEvent {
   final Product product;
-  const AddProductToCartEvent({required this.product});
+  final num countProduct; 
+  const AddProductToCartEvent({required this.product, required this.countProduct});
 
   @override
-  List<Object> get props => [product];
+  List<Object> get props => [product, countProduct];
 }
 
 class RemoveProductToCartEvent extends CartEvent {
   final Product product;
   const RemoveProductToCartEvent({required this.product});
 }
-
 
 class ShowCartEvent extends CartEvent {
   final List<Product> cartItem;
